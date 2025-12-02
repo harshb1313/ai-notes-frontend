@@ -4,8 +4,27 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { NotebookPen } from 'lucide-react';
+import { Register } from '@/lib/calls/services';
+import { useRouter } from 'next/navigation';
 
 export default function SignupPage() {
+    const router = useRouter()
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        try {
+            const username = e.target.username.value
+            const password = e.target.password.value
+            const payload = { username, password }
+            const data = await Register(payload)
+            if (data?.user?.accesstoken) {
+                localStorage.setItem('token', data.user.accesstoken)
+                router.push('/dashboard')
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-[var(--secondary)]/30 p-4">
             <div className="w-full max-w-md space-y-8 bg-[var(--background)] p-8 rounded-2xl border border-[var(--border)] shadow-lg">
@@ -19,18 +38,18 @@ export default function SignupPage() {
                     </p>
                 </div>
 
-                <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-                    <div className="space-y-2">
+                <form className="space-y-4" onSubmit={handleSubmit}>
+                    {/* <div className="space-y-2">
                         <label htmlFor="name" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                             Full Name
                         </label>
                         <Input id="name" type="text" placeholder="John Doe" required />
-                    </div>
+                    </div> */}
                     <div className="space-y-2">
-                        <label htmlFor="email" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                            Email
+                        <label htmlFor="username" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                            Username
                         </label>
-                        <Input id="email" type="email" placeholder="m@example.com" required />
+                        <Input id="username" type="text" placeholder="user123" required />
                     </div>
                     <div className="space-y-2">
                         <label htmlFor="password" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -38,11 +57,11 @@ export default function SignupPage() {
                         </label>
                         <Input id="password" type="password" required />
                     </div>
-                    <Link href="/dashboard" className="w-full block">
-                        <Button className="w-full" size="lg">
-                            Create Account
-                        </Button>
-                    </Link>
+
+                    <Button className="w-full" size="lg">
+                        Create Account
+                    </Button>
+
                 </form>
 
                 <div className="text-center text-sm">
