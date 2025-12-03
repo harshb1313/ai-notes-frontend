@@ -6,37 +6,25 @@ import NoteCard from '@/components/NoteCard';
 import { Button } from '@/components/ui/Button';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
-
-// Mock Data
-const INITIAL_NOTES = [
-    {
-        id: '1',
-        title: 'Project Ideas 2024',
-        preview: '1. AI-powered ToDo list app with smart prioritization. 2. Personal finance tracker with receipt scanning. 3. Fitness app that generates workout plans based on available equipment.',
-        date: 'Oct 24, 2024',
-    },
-    {
-        id: '2',
-        title: 'Meeting Notes: Design Review',
-        preview: 'Attendees: Sarah, Mike, John. Key decisions: 1. Switch to a darker color scheme for the dashboard. 2. Increase the font size for better readability on mobile devices. Action items: Mike to update the Figma file.',
-        date: 'Oct 22, 2024',
-    },
-    {
-        id: '3',
-        title: 'Grocery List',
-        preview: 'Milk, Eggs, Bread, Spinach, Chicken breast, Rice, Apples, Bananas, Yogurt, Coffee beans.',
-        date: 'Oct 20, 2024',
-    },
-    {
-        id: '4',
-        title: 'Book Recommendations',
-        preview: 'The Pragmatic Programmer, Clean Code, Design Patterns, Refactoring UI, The Psychology of Money.',
-        date: 'Oct 18, 2024',
-    },
-];
+import { getUserNotes } from '@/lib/calls/services';
+import { useEffect } from 'react';
 
 export default function DashboardPage() {
-    const [notes, setNotes] = useState(INITIAL_NOTES);
+    const [notes, setNotes] = useState([]);
+
+
+
+    useEffect(() => {
+        const HandleCall = async () => {
+            try {
+                const response = await getUserNotes()
+                setNotes(response)
+            } catch (error) {
+                console.log('error while fetching notes', error)
+            }
+        }
+        HandleCall()
+    }, [])
 
     const handleDelete = (id) => {
         setNotes(notes.filter(note => note.id !== id));
@@ -69,8 +57,8 @@ export default function DashboardPage() {
                                 key={note.id}
                                 id={note.id}
                                 title={note.title}
-                                preview={note.preview}
-                                date={note.date}
+                                preview={note.content.slice(0, 100)}  // if you want preview
+                                date={note.created_at}
                                 onDelete={handleDelete}
                             />
                         ))}

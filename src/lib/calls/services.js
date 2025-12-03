@@ -22,3 +22,26 @@ export const Register = async (formdata) => {
         throw error
     }
 }
+
+//get User Notes
+export const getUserNotes = async () => {
+    try {
+        const response = await api.get(API_ENDPOINTS.getUserNotes)
+        return response.data
+    } catch (error) {
+        console.log("error while fetching user notes", error);
+        throw error
+    }
+}
+
+//create Notes
+
+export const CreateNotes = async (formdata) => {
+    try {
+        const response = await api.post(API_ENDPOINTS.getUserNotes, formdata)
+        return response
+    } catch (error) {
+        console.log("error while creating notes", error)
+        throw error
+    }
+}

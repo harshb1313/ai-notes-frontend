@@ -6,8 +6,18 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { ChevronLeft, Save } from 'lucide-react';
+import { CreateNotes } from '@/lib/calls/services';
 
 export default function CreateNotePage() {
+    const handleSave = async (e) => {
+        const title = document.getElementById('title').value
+        const content = document.getElementById('content').value
+        const payload = { title, content }
+        const data = await CreateNotes(payload)
+        console.log(data);
+    }
+
+
     return (
         <div className="min-h-screen bg-[var(--secondary)]/30">
             <Navbar />
@@ -23,12 +33,12 @@ export default function CreateNotePage() {
                     </Link>
                     <div className="flex items-center justify-between">
                         <h1 className="text-3xl font-bold tracking-tight">Create Note</h1>
-                        <Link href="/dashboard">
-                            <Button className="gap-2">
-                                <Save className="h-4 w-4" />
-                                Save Note
-                            </Button>
-                        </Link>
+
+                        <Button className="gap-2" onClick={handleSave}>
+                            <Save className="h-4 w-4" />
+                            Save Note
+                        </Button>
+
                     </div>
                 </div>
 
