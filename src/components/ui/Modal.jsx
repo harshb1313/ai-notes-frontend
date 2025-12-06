@@ -30,7 +30,7 @@ export const Modal = ({ isOpen, onClose, title, children }) => {
     if (!isOpen) return null;
 
     return (
-        <div 
+        <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200"
             onClick={handleBackdropClick}
         >
@@ -41,7 +41,7 @@ export const Modal = ({ isOpen, onClose, title, children }) => {
             >
                 <div className="flex items-center justify-between border-b border-[var(--border)] p-4">
                     <h2 className="text-lg font-semibold">{title}</h2>
-                    <Button variant="ghost" size="icon" onClick={onClose}>
+                    <Button variant="ghost" size="icon" onClick={onClose} className="cursor-pointer">
                         <X className="h-4 w-4" />
                     </Button>
                 </div>

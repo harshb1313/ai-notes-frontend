@@ -7,14 +7,27 @@ import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { ChevronLeft, Save } from 'lucide-react';
 import { CreateNotes } from '@/lib/calls/services';
+import { toast } from 'sonner';
 
 export default function CreateNotePage() {
     const handleSave = async (e) => {
-        const title = document.getElementById('title').value
-        const content = document.getElementById('content').value
-        const payload = { title, content }
-        const data = await CreateNotes(payload)
-        console.log(data);
+
+        try {
+            const title = document.getElementById('title').value
+            const content = document.getElementById('content').value
+            const payload = { title, content }
+            if (!document.getElementById('title').value || !document.getElementById('content').value) {
+                toast.error("fields cannot be empty")
+            }
+            const data = await CreateNotes(payload)
+            console.log(data);
+            if (data) {
+                document.getElementById('title').value = ""
+                document.getElementById('content').value = ""
+            }
+        } catch (error) {
+            console.log("while creating post error occured", error)
+        }
     }
 
 
@@ -34,7 +47,7 @@ export default function CreateNotePage() {
                     <div className="flex items-center justify-between">
                         <h1 className="text-3xl font-bold tracking-tight">Create Note</h1>
 
-                        <Button className="gap-2" onClick={handleSave}>
+                        <Button className="gap-2 cursor-pointer" onClick={handleSave}>
                             <Save className="h-4 w-4" />
                             Save Note
                         </Button>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/Button';
@@ -10,6 +10,9 @@ import { Textarea } from '@/components/ui/Textarea';
 import { Modal } from '@/components/ui/Modal';
 import AITools from '@/components/AITools';
 import { ChevronLeft, Save, Sparkles } from 'lucide-react';
+import { getSingleNote } from '@/lib/calls/services';
+import { editNote } from '@/lib/calls/services';
+import { aiSummarizer, aiKeywords, aiTitleGen, aiRewrite } from '@/lib/calls/services';
 
 export default function EditNotePage() {
     const params = useParams();
@@ -21,32 +24,72 @@ export default function EditNotePage() {
     const [aiResult, setAiResult] = useState('');
     const [isAiLoading, setIsAiLoading] = useState(false);
 
-    const handleToolSelect = (tool) => {
+    const handleToolSelect = async (tool) => {
         setActiveTool(tool);
         setAiResult('');
         setIsAiLoading(true);
 
-        // Simulate AI processing
-        setTimeout(() => {
-            let result = '';
-            switch (tool) {
-                case 'summarize':
-                    result = 'Summary: The note lists three app ideas: a smart ToDo list, a finance tracker with receipt scanning, and a personalized fitness app.';
-                    break;
-                case 'rewrite':
-                    result = '1. Smart ToDo Application: Features intelligent task prioritization.\n2. Finance Management Tool: Includes receipt scanning capabilities.\n3. Personalized Workout Generator: Creates plans based on user equipment.';
-                    break;
-                case 'keywords':
-                    result = 'Keywords: AI, ToDo, Finance, Fitness, App Ideas, Smart Prioritization, Receipt Scanning, Workout Plans';
-                    break;
-                case 'title':
-                    result = 'Innovative App Concepts for 2024';
-                    break;
+        try {
+            if (tool === "summarize") {
+                const result = await aiSummarizer(noteId);   // ⬅ real backend call
+                setAiResult(result.summary || result);       // adjust depending on backend response
             }
-            setAiResult(result);
+
+            if (tool === "rewrite") {
+                const content = document.getElementById("content").value;
+                const result = await aiRewrite(content)
+                setAiResult(result.paraphrased)
+            }
+
+            if (tool === "keywords") {
+                if (tool === "keywords") {
+                    const content = document.getElementById("content").value;
+                    const result = await aiKeywords(content);
+
+                    // result.note is an array — convert to displayable text
+                    const formatted = Array.isArray(result.note)
+                        ? result.note.join(", ")
+                        : result.note;
+
+                    setAiResult(formatted);
+                }
+
+            }
+
+            if (tool === "title") {
+                const content = document.getElementById("content").value;
+                const result = await aiTitleGen(content)
+                setAiResult(result.note)
+            }
+
+        } catch (error) {
+            console.log("AI tool error:", error);
+            setAiResult("Something went wrong while processing.");
+        } finally {
             setIsAiLoading(false);
-        }, 1500);
+        }
     };
+
+
+    const handleEdit = async () => {
+        try {
+            const title = document.getElementById("title").value
+            const content = document.getElementById("content").value
+            const payload = { title, content }
+            await editNote(noteId, payload)
+        } catch (error) {
+            console.log("error while editing note", error)
+        }
+    }
+
+    useEffect(() => {
+        const fetchNote = async () => {
+            const response = await getSingleNote(noteId)
+            setTitle(response.title)
+            setContent(response.content)
+        }
+        fetchNote()
+    }, [])
 
     const applyAiResult = () => {
         if (activeTool === 'title') {
@@ -72,12 +115,12 @@ export default function EditNotePage() {
                     </Link>
                     <div className="flex items-center justify-between">
                         <h1 className="text-3xl font-bold tracking-tight">Edit Note</h1>
-                        <Link href="/dashboard">
-                            <Button className="gap-2">
-                                <Save className="h-4 w-4" />
-                                Save Changes
-                            </Button>
-                        </Link>
+
+                        <Button onClick={handleEdit} className="gap-2 cursor-pointer">
+                            <Save className="h-4 w-4" />
+                            Save Changes
+                        </Button>
+
                     </div>
                 </div>
 
@@ -86,7 +129,7 @@ export default function EditNotePage() {
                         <div className="bg-[var(--background)] rounded-xl border border-[var(--border)] shadow-sm p-6 space-y-6">
                             <div className="space-y-2">
                                 <label htmlFor="title" className="text-sm font-medium">
-                                    Title
+
                                 </label>
                                 <Input
                                     id="title"
@@ -149,10 +192,10 @@ export default function EditNotePage() {
                                 {aiResult}
                             </div>
                             <div className="flex justify-end gap-2">
-                                <Button variant="ghost" onClick={() => setActiveTool(null)}>
+                                <Button variant="ghost" className="cursor-pointer" onClick={() => setActiveTool(null)}>
                                     Cancel
                                 </Button>
-                                <Button onClick={applyAiResult}>
+                                <Button onClick={applyAiResult} className="cursor-pointer">
                                     {activeTool === 'title' ? 'Use Title' : 'Append to Note'}
                                 </Button>
                             </div>

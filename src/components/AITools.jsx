@@ -13,7 +13,7 @@ export default function AITools({ onToolSelect }) {
                 variant="secondary"
                 size="sm"
                 onClick={() => onToolSelect('summarize')}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 cursor-pointer"
             >
                 <FileText className="h-3 w-3" />
                 Summarize
@@ -23,7 +23,7 @@ export default function AITools({ onToolSelect }) {
                 variant="secondary"
                 size="sm"
                 onClick={() => onToolSelect('rewrite')}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 cursor-pointer"
             >
                 <Sparkles className="h-3 w-3" />
                 Rewrite
@@ -33,7 +33,7 @@ export default function AITools({ onToolSelect }) {
                 variant="secondary"
                 size="sm"
                 onClick={() => onToolSelect('keywords')}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 cursor-pointer"
             >
                 <Key className="h-3 w-3" />
                 Keywords
@@ -43,7 +43,7 @@ export default function AITools({ onToolSelect }) {
                 variant="secondary"
                 size="sm"
                 onClick={() => onToolSelect('title')}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 cursor-pointer"
             >
                 <Type className="h-3 w-3" />
                 Generate Title

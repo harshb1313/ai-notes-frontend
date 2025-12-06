@@ -55,7 +55,7 @@ export default function LoginPage() {
                         <Input id="password" type="password" required />
                     </div>
 
-                    <Button type="submit" className="w-full" size="lg">
+                    <Button type="submit" className="w-full cursor-pointer" size="lg">
                         Sign In
                     </Button>
                 </form>
